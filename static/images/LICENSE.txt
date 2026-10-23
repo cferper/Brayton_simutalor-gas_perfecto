@@ -1,0 +1,4 @@
+engine-cutaway.svg: Original geometric schematic created for Brayton Simulator, 2026-10-21.
+Dedicated to the public domain under CC0 1.0 Universal (CC0-1.0).
+https://creativecommons.org/publicdomain/zero/1.0/
+No external illustration was copied. Decorative educational schematic, not to scale.

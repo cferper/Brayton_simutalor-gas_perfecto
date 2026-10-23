@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 760 180" aria-hidden="true">
+<!-- Original geometric educational schematic for Brayton Simulator, 2026-10-21. CC0-1.0. Not to scale. -->
+<defs><linearGradient id="casing" x2="0" y2="1"><stop stop-color="#e7eef5"/><stop offset=".5" stop-color="#fff"/><stop offset="1" stop-color="#dce7ef"/></linearGradient></defs>
+<path d="M20 90H740" stroke="#9bb2c5" stroke-dasharray="5 7"/>
+<path d="M45 57Q85 25 155 29L320 35 375 43 527 48 650 64 711 78V102L650 116 527 132 375 137 320 145 155 151Q85 155 45 123L68 111 145 127 322 119 371 111 524 111 640 101 688 90 640 79 524 69 371 69 322 61 145 53 68 69Z" fill="url(#casing)" stroke="#7c9bb2" stroke-width="2"/>
+<path d="M73 90 123 77 310 80 358 85H510L578 90 510 95H358L310 100 123 103Z" fill="#a5bed1" stroke="#6588a5"/>
+<g fill="#376785" stroke="#174a70"><path d="m147 54 11 28h-6l-13-27Zm0 72 11-28h-6l-13 27Zm31-70 11 26h-6l-13-25Zm0 68 11-26h-6l-13 25Zm31-66 11 25h-6l-13-24Zm0 64 11-25h-6l-13 24Zm31-62 11 23h-6l-13-22Zm0 60 11-23h-6l-13 22Zm31-58 11 21h-6l-13-20Zm0 56 11-21h-6l-13 20Zm31-54 11 19h-6l-13-18Zm0 52 11-19h-6l-13 18Z"/></g>
+<g fill="#d5e4ef" stroke="#638ba7"><path d="M362 63h68l32 18h-88Zm0 54h68l32-18h-88Z"/><path d="m374 67 32 6-13 8h-14Zm0 46 32-6-13-8h-14Z" fill="#93b8d0"/></g>
+<g fill="#315e7c" stroke="#174a70"><path d="m478 71 10 14h-7l-10-14Zm0 38 10-14h-7l-10 14Zm23-37 9 13h-6l-10-13Zm0 36 9-13h-6l-10 13Zm23-34 9 12h-6l-10-12Zm0 32 9-12h-6l-10 12Z"/></g></svg>
