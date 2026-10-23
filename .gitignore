@@ -1,0 +1,15 @@
+# Entorno virtual de Python
+.venv/
+
+# Archivos temporales de Python
+__pycache__/
+*.pyc
+
+# Configuraciones locales del editor
+.vscode/
+
+# Archivos temporales
+*.tmp
+
+# Informes HTML generados en cada ejecución
+outputs/
