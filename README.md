@@ -318,22 +318,38 @@ To explore other cases, use the local form below or call `main(parametros={"T3":
 
 ### Local web interface from VS Code
 
-**Windows shortcut:** double-click `Abrir_Brayton_Simulator.cmd` in the project folder. It starts the existing local Flask app using `.venv` and opens your default browser once the form responds. Keep the server console open; Ctrl+C stops it. If the form is already running, it opens that instance without launching another server. Install the existing requirements first; the launcher does not install anything. Missing dependencies or startup failures remain visible in the console. A different application occupying port 5000 must be stopped before retrying. No simulation runs until you submit the form.
+**Windows shortcut:** double-click `Abrir_Brayton_Simulator.cmd` in the project folder. It starts the existing local Flask app using `.venv` and opens your default browser once the form responds. Keep the server console open; Ctrl+C stops it. If the form is already running, it opens that instance without launching another server. Install the existing requirements first; the launcher does not install anything. Missing dependencies or startup failures remain visible in the console. A different application occupying port 5001 must be stopped before retrying. No simulation runs until you submit the form.
 
-Open the project folder and a PowerShell terminal in `C:\Proyectos\Brayton_Simulator`. Install the requirements in the existing virtual environment, then start the server:
+Open the project folder and a PowerShell terminal in `C:\Proyectos\Brayton_Simulator-gas_perfecto_GitHub`. Install the requirements in the existing virtual environment, then start the server:
 
 ```powershell
 .\.venv\Scripts\python.exe -m pip install -r requirements.txt
 .\.venv\Scripts\python.exe web_app.py
 ```
 
-With the virtual environment activated, the second command is simply `python web_app.py`. Open [Brayton Simulator locally](http://127.0.0.1:5000) in Chrome or Edge. Edit the nine fields and click **Ejecutar simulación**. Temperatures use K, pressure uses kPa, cp uses J/(kg·K), efficiencies are fractions and combustor pressure loss is entered as a percentage (5 means 5 %, converted internally to 0.05).
+With the virtual environment activated, the second command is simply `python web_app.py`. Open [Brayton Simulator locally](http://127.0.0.1:5001) in Chrome or Edge. Edit the nine fields and click **Ejecutar simulación**. Temperatures use K, pressure uses kPa, cp uses J/(kg·K), efficiencies are fractions and combustor pressure loss is entered as a percentage (5 means 5 %, converted internally to 0.05).
 
 The completed report opens after a redirect. **Volver al formulario** lets you run another case without restarting the server; **Restablecer valores** loads the defaults. **Descargar informe HTML** downloads the original self-contained file, without server navigation links. Both modes share `outputs/` and its four-report retention. An older report URL returns 404 after that report is removed by retention.
 
 The server validates missing/non-numeric/non-finite values and all individual ranges. A non-motor reference case shows all failed physical conditions and its open pressure-ratio interval when available, preserving submitted values. Numerical representation limits use a distinct message. Sweeps classify excluded points without aborting valid regions. These errors do not publish a report or clean the history. Unexpected failures are logged with a traceback in the terminal and return a generic HTTP 500, without exposing internal details in the browser.
 
-Stop the server with **Ctrl+C**. It binds only to `127.0.0.1:5000`, with debug, reloader and threading disabled. Requests are handled sequentially to keep Matplotlib isolated per simulation. Do not change the bind address for this local workflow. If port 5000 is already occupied, stop the other local instance before restarting. Flask is the only new direct dependency; the initial installation requires downloaded or locally cached packages, but use after installation needs no Internet. This is a local development tool, with no public deployment or accounts.
+Stop the server with **Ctrl+C**. It binds only to `127.0.0.1:5001`, with debug, reloader and threading disabled. Requests are handled sequentially to keep Matplotlib isolated per simulation. Do not change the bind address for this local workflow. If port 5001 is already occupied, stop the other local instance before restarting. Flask is the only new direct dependency; the initial installation requires downloaded or locally cached packages, but use after installation needs no Internet. This is a local development tool, with no public deployment or accounts.
+
+To run both independent simulators simultaneously, use two PowerShell terminals with the existing environments:
+
+```powershell
+# Terminal 1: cp(T) — http://127.0.0.1:5000
+Set-Location 'C:\Proyectos\Brayton_Simulator'
+.\.venv\Scripts\python.exe -B web_app.py
+```
+
+```powershell
+# Terminal 2: perfect gas — http://127.0.0.1:5001
+Set-Location 'C:\Proyectos\Brayton_Simulator-gas_perfecto_GitHub'
+.\.venv\Scripts\python.exe -B web_app.py
+```
+
+The fixed ports apply when running `web_app.py` directly. If 5001 is occupied, the perfect-gas process exits with an error in the terminal; it never selects another port automatically. Relative navigation and report links stay on the application's own server. Existing standalone reports do not require URL changes.
 
 Run the verification suite from the repository root with the virtual environment active:
 

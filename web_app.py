@@ -266,7 +266,7 @@ def error_interno(error):
 
 def iniciar_servidor():
     """Servidor de uso local, sin depurador, recarga ni simulaciones paralelas."""
-    app.run(host="127.0.0.1", port=5000, debug=False, use_reloader=False, threaded=False)
+    app.run(host="127.0.0.1", port=5001, debug=False, use_reloader=False, threaded=False)
 
 
 if __name__ == "__main__":

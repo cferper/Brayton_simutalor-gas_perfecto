@@ -727,9 +727,9 @@ def iniciar_servidor():
 
 - **Propósito:** arrancar el servidor local; no calcula física. Sin argumentos ni unidades.
 - **Retorno:** `None` al detenerse; mientras está activo la llamada permanece atendiendo peticiones.
-- **Llama:** ninguna función propia; invoca `app.run(host="127.0.0.1", port=5000, debug=False, use_reloader=False, threaded=False)`.
+- **Llama:** ninguna función propia; invoca `app.run(host="127.0.0.1", port=5001, debug=False, use_reloader=False, threaded=False)`.
 - **La llaman:** punto de entrada de `web_app.py` y prueba que inspecciona los argumentos sin abrir un socket.
-- **Validación/errores:** si el puerto está ocupado o faltan permisos, el servidor puede no arrancar y lo indica en terminal. No cambia a una interfaz pública automáticamente.
+- **Validación/errores:** si el puerto 5001 está ocupado o faltan permisos, Flask/Werkzeug muestra el error en terminal y termina el proceso con código distinto de cero. No se captura ese fallo para reintentar con otro puerto. El puerto fijo distingue el gas perfecto del repositorio independiente cp(T), que utiliza 5000.
 - **PYTHON:** argumentos nombrados y punto de entrada protegido. No se inicia al importar `web_app`.
 - **Ejemplo:** `python web_app.py`, y Ctrl+C para detenerlo. Se usa el servidor de desarrollo Flask solo para esta herramienta local, sin depurador interactivo ni recarga automática.
 
@@ -758,6 +758,7 @@ Todos reciben `self`, devuelven `None` y no añaden ecuaciones ni unidades. El e
 | `test_error_inesperado_se_registra_y_no_se_presenta_como_fisico(self)` | Inyecta fallo de dibujo; exige 500, registro de traza y ausencia de detalle privado en respuesta |
 | `test_no_se_exponen_archivos_ajenos_o_rutas_locales(self)` | GET de rutas y archivos no autorizados; espera 404 |
 | `test_servidor_se_configura_solo_para_loopback_sin_debug(self)` | Sustituye `app.run`, llama a `iniciar_servidor` y verifica sus opciones |
+| `test_puerto_ocupado_termina_con_error_sin_alternativa(self)` | Reserva un puerto efímero con `socket`, redirige solo la dirección de bind de Werkzeug a ese puerto ocupado y ejecuta el punto de entrada de `web_app.py` mediante `subprocess.run`; exige salida no nula, diagnóstico de red y ausencia de arranque alternativo |
 | `test_importar_modulos_no_ejecuta_ni_escucha(self)` | Importa módulos en un proceso Python aparte y prohíbe generar informes o arrancar servidor |
 | `test_main_directo_con_valores_predeterminados(self)` | Ejecuta el punto de entrada mediante `runpy`, sustituyendo solo destino de prueba; comprueba resumen y referencia |
 
@@ -1132,7 +1133,7 @@ Comprobación de cierre del rediseño (21 de octubre de 2026): suite completa **
 
 Primera suite: 123/123 pruebas OK en 124.582 s (108 anteriores + 15 nuevas). Verificación final: 123/123 pruebas correctas en 70.814 s; se conservan las 108 previas y se añaden 15 de dashboard. Las nuevas pruebas comprueban datos/KPI no hardcodeados, None/supremos, seis secciones, nueve entradas, 7/3 PNG sin duplicados, plegables, recursos incrustados/licencias, JSON seguro, historial sólo lectura, descarga idéntica, compatibilidad histórica y documentos permitidos. Las pruebas estáticas de HTML/CSS/JS **no** se presentan como verificación de interactividad.
 
-En navegador real: simulación normal, cambio de pestaña, comparación A/B, ampliación y Escape con retorno del foco; ejecución OFAT con muestras inviables y sus pestañas. Viewport de escritorio 1440 px y móvil 393 px; comprobación DOM de anchura sin overflow horizontal. Recursos e informes de revisión en carpeta aislada, servidor temporal sólo 127.0.0.1:5015; el puerto normal sigue en 5000. Comprobación adicional del autónomo y limitaciones de revisión en la guía del rediseño. Fuente física, algoritmos, dependencias, PNG históricos y guías de fases anteriores intactos. El rediseño quedó registrado en `2996ad9adb7b082ac36531bcf940b7e18986202a` y fusionado en `b6fdfbeb5aa63605734258449f05a9ff3f964946`; los resultados anteriores corresponden a su revisión, no a las pruebas de Fase 5.
+En navegador real: simulación normal, cambio de pestaña, comparación A/B, ampliación y Escape con retorno del foco; ejecución OFAT con muestras inviables y sus pestañas. Viewport de escritorio 1440 px y móvil 393 px; comprobación DOM de anchura sin overflow horizontal. Recursos e informes de revisión en carpeta aislada, servidor temporal sólo 127.0.0.1:5015; el puerto normal actual es 5001. Comprobación adicional del autónomo y limitaciones de revisión en la guía del rediseño. Fuente física, algoritmos, dependencias, PNG históricos y guías de fases anteriores intactos. El rediseño quedó registrado en `2996ad9adb7b082ac36531bcf940b7e18986202a` y fusionado en `b6fdfbeb5aa63605734258449f05a9ff3f964946`; los resultados anteriores corresponden a su revisión, no a las pruebas de Fase 5.
 
 ### 4.42. Mapa bidimensional de diseño rp–T3 (Fase 5)
 
@@ -2010,11 +2011,11 @@ En VS Code, ejecuta `python main.py` con el entorno activo. Expande `outputs/` e
 
 ### Interfaz local: navegador → Flask → simulador
 
-Desde el Explorador de Windows, haz doble clic en **`Abrir_Brayton_Simulator.cmd`**, en la raíz del proyecto. Arranca el formulario y abre el navegador predeterminado en `http://127.0.0.1:5000/` cuando responde. Mantén abierta la ventana del servidor; Ctrl+C lo detiene. Si el formulario ya estaba activo, reutiliza esa instancia, abre el navegador y termina el nuevo lanzador; la ventana del servidor original sigue controlándolo.
+Desde el Explorador de Windows, haz doble clic en **`Abrir_Brayton_Simulator.cmd`**, en la raíz del proyecto. Arranca el formulario y abre el navegador predeterminado en `http://127.0.0.1:5001/` cuando responde. Mantén abierta la ventana del servidor; Ctrl+C lo detiene. Si el formulario ya estaba activo, reutiliza esa instancia, abre el navegador y termina el nuevo lanzador; la ventana del servidor original sigue controlándolo.
 
 El lanzador es un archivo de comandos de Windows, sin funciones Python nuevas ni ecuaciones. `%~dp0` obtiene su propia carpeta; `cd /d` cambia también de unidad para que `.venv` y `web_app.py` se resuelvan correctamente aunque lo abras desde otra ubicación. Usa el Python de `.venv` con `-B` para evitar cachés; comprueba Flask/NumPy/Matplotlib antes de iniciar. `start ""` reserva un título vacío y abre la URL o el proceso de espera. PowerShell consulta el formulario mediante GET, comprueba que contiene formulario y el campo de relación de presiones, y sólo entonces abre el navegador; la espera auxiliar se ejecuta oculta y tiene 30 intentos acotados. No envía datos ni genera informes.
 
-Si faltan entorno o dependencias, muestra un mensaje y pausa. Si Flask no arranca, deja visible el error; un puerto 5000 ocupado por otra aplicación debe liberarse antes de reintentar. No instala paquetes ni cambia el puerto o la dirección local. Requiere Windows, PowerShell, navegador predeterminado y las dependencias ya instaladas. Si no se abre el navegador tras arrancar, puedes visitar la URL manualmente. Un servidor ya activo se identifica por su respuesta HTML, no por una comprobación de la versión Git que tiene cargada.
+Si faltan entorno o dependencias, muestra un mensaje y pausa. Si Flask no arranca, deja visible el error; un puerto 5001 ocupado por otra aplicación debe liberarse antes de reintentar. No instala paquetes ni cambia el puerto o la dirección local. Requiere Windows, PowerShell, navegador predeterminado y las dependencias ya instaladas. Si no se abre el navegador tras arrancar, puedes visitar la URL manualmente. Un servidor ya activo se identifica por su respuesta HTML, no por una comprobación de la versión Git que tiene cargada.
 
 Desde el terminal de VS Code situado en la raíz:
 
@@ -2023,7 +2024,23 @@ Desde el terminal de VS Code situado en la raíz:
 .\.venv\Scripts\python.exe web_app.py
 ```
 
-Abre `http://127.0.0.1:5000` en Chrome o Edge. Con el entorno activado bastan `python web_app.py` y, para la modalidad anterior, `python main.py`. Ctrl+C detiene el servidor. Si no está activo, la URL local no responde. Al ejecutar directamente `python web_app.py` no se abre el navegador automáticamente; el lanzador por doble clic sí lo hace. No hay instalación ni despliegue en Internet. La instalación inicial de dependencias sí requiere paquetes disponibles localmente o conexión para descargarlos.
+Abre `http://127.0.0.1:5001` en Chrome o Edge. Con el entorno activado bastan `python web_app.py` y, para la modalidad anterior, `python main.py`. Ctrl+C detiene el servidor. Si no está activo, la URL local no responde. Al ejecutar directamente `python web_app.py` no se abre el navegador automáticamente; el lanzador por doble clic sí lo hace. No hay instalación ni despliegue en Internet. La instalación inicial de dependencias sí requiere paquetes disponibles localmente o conexión para descargarlos.
+
+**PYTHON / ejecución:** `port=5001` es un argumento nombrado fijo de `app.run`; no depende de `FLASK_RUN_PORT`. Ejecuta `web_app.py` directamente para usar esta configuración. El lanzador consulta y abre el mismo puerto. Los enlaces de formulario, historial y descarga son relativos al servidor que los entrega; no requieren reescribir informes históricos. La prueba de configuración también comprueba la URL del lanzador. La nueva prueba de puerto ocupado no recibe argumentos aparte de `self`, no devuelve datos ni tiene unidades físicas; `unittest` la ejecuta y sus aserciones pueden lanzar `AssertionError`. Usa `socket.socket`, `subprocess.run` y `sys.executable`, con límite de 20 s. El sistema asigna un puerto temporal al pedir `bind(("127.0.0.1", 0))`; `getsockname()[1]` obtiene su número. `SO_EXCLUSIVEADDRUSE` impide compartirlo accidentalmente en Windows. Dentro del subproceso, `patch` sustituye solo la resolución de dirección de Werkzeug para provocar una colisión real en ese puerto; `runpy.run_path(..., run_name='__main__')` ejecuta el punto de entrada habitual. La configuración 5001 se comprueba por separado, sin depender de reservas o servidores ajenos de Windows. `with` libera el socket al terminar. Ejemplo: `python -m unittest discover -s tests -p test_web_app.py -q`.
+
+**INTERPRETACIÓN FÍSICA / INGENIERÍA:** separar los puertos es una decisión de ejecución local. No modifica los nueve parámetros físicos, las ecuaciones ni los resultados. Para ejecutar ambos repositorios simultáneamente, utiliza dos terminales PowerShell; cada uno conserva su entorno y su carpeta de informes:
+
+```powershell
+# Terminal 1: cp(T), http://127.0.0.1:5000
+Set-Location 'C:\Proyectos\Brayton_Simulator'
+.\.venv\Scripts\python.exe -B web_app.py
+```
+
+```powershell
+# Terminal 2: gas perfecto, http://127.0.0.1:5001
+Set-Location 'C:\Proyectos\Brayton_Simulator-gas_perfecto_GitHub'
+.\.venv\Scripts\python.exe -B web_app.py
+```
 
 **HTTP GET:** solicita una representación, por ejemplo el formulario o un informe guardado. No ejecuta una simulación al visitar `/`. **HTTP POST:** envía los campos mediante el cuerpo de la petición para ejecutar un caso. Los valores llegan como cadenas, aunque el navegador dibuje controles numéricos.
 

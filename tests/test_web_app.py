@@ -3,6 +3,7 @@
 from contextlib import redirect_stdout
 from io import StringIO
 from pathlib import Path
+import socket
 import subprocess
 import sys
 import tempfile
@@ -36,6 +37,12 @@ class WebTests(unittest.TestCase):
         self.assertIn('value="5.0"', texto)
         self.assertIn("Ejecutar simulación", texto)
         self.assertIn("Restablecer valores", texto)
+        self.assertEqual(set(self.datos), {
+            "T1", "T3", "p1", "cp", "gamma", "relacion_presiones",
+            "eta_c", "eta_t", "perdida_presion_combustor",
+        })
+        for nombre in self.datos:
+            self.assertIn(f'name="{nombre}"', texto)
         with self.client.get("/static/style.css") as estilo:
             self.assertEqual(estilo.status_code, 200)
         self.assertFalse(self.carpeta.exists())
@@ -175,8 +182,35 @@ class WebTests(unittest.TestCase):
     def test_servidor_se_configura_solo_para_loopback_sin_debug(self):
         with patch.object(web_app.app, "run") as run:
             web_app.iniciar_servidor()
-        run.assert_called_once_with(host="127.0.0.1", port=5000, debug=False,
+        run.assert_called_once_with(host="127.0.0.1", port=5001, debug=False,
                                     use_reloader=False, threaded=False)
+        lanzador = Path(web_app.__file__).with_name("Abrir_Brayton_Simulator.cmd").read_text(encoding="utf-8")
+        self.assertIn("http://127.0.0.1:5001/", lanzador)
+        self.assertNotIn("5000", lanzador)
+
+    def test_puerto_ocupado_termina_con_error_sin_alternativa(self):
+        # Aísla la colisión de cualquier servidor o reserva de Windows en 5001.
+        # La prueba anterior verifica el puerto fijo; aquí solo se redirige
+        # la dirección de bind a un puerto efímero realmente ocupado.
+        with socket.socket() as ocupado:
+            if hasattr(socket, "SO_EXCLUSIVEADDRUSE"):
+                ocupado.setsockopt(socket.SOL_SOCKET, socket.SO_EXCLUSIVEADDRUSE, 1)
+            ocupado.bind(("127.0.0.1", 0))
+            ocupado.listen(1)
+            codigo = """
+import runpy, sys
+from unittest.mock import patch
+with patch('werkzeug.serving.get_sockaddr', return_value=('127.0.0.1', int(sys.argv[1]))):
+    runpy.run_path(sys.argv[2], run_name='__main__')
+"""
+            resultado = subprocess.run(
+                [sys.executable, "-B", "-c", codigo, str(ocupado.getsockname()[1]),
+                 str(Path(web_app.__file__).resolve())],
+                capture_output=True, text=True, timeout=20,
+            )
+        self.assertNotEqual(resultado.returncode, 0)
+        self.assertRegex(resultado.stderr, r"(?i)address|port|socket|permission|acceso|direcci[oó]n|puerto")
+        self.assertNotIn("Running on", resultado.stdout + resultado.stderr)
 
     def test_importar_modulos_no_ejecuta_ni_escucha(self):
         codigo = """
