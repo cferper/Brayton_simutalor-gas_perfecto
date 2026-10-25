@@ -66,6 +66,13 @@ details{min-width:0}details.card{padding:0}details.card>summary{padding:16px 20p
 .edu-theory h3{margin:20px 0 7px;color:#174a70;font-size:16px}
 .edu-theory h3:first-child{margin-top:0}
 .edu-theory p{max-width:105ch}
+.edu-deep{max-width:960px;min-width:0;overflow-wrap:anywhere;font-size:14px;line-height:1.8}
+.edu-deep-block{padding:18px 0;border-bottom:1px solid #dfe6ee}
+.edu-deep-block:first-child{padding-top:0}
+.edu-deep-block:last-child{border-bottom:0;padding-bottom:0}
+.edu-deep-block h3{line-height:1.45;margin-top:0}
+.edu-deep-block p{max-width:85ch;margin:0 0 12px}
+.edu-deep-block p:last-child{margin-bottom:0}
 @media(max-width:760px){.edu-tab{flex:1;padding:9px 10px;font-size:12px}.edu-theory{padding:16px}}
 @media print{.edu-tabbar{display:none!important}.js .edu-tab-pane[hidden]{display:block!important}}
 

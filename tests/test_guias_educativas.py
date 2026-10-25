@@ -1,5 +1,5 @@
 import unittest
-from guias_educativas import construir_guias, construir_pestanas, GUIAS
+from guias_educativas import construir_guias, construir_pestanas, GUIAS, BLOQUES
 
 class TestGuias(unittest.TestCase):
     def test_todas_las_secciones(self):
@@ -37,6 +37,43 @@ class TestPestanasEducativas(unittest.TestCase):
             self.assertIn('Qué vamos a estudiar', vistas['resumen'])
             self.assertIn('Ecuaciones y magnitudes', vistas['teoria'])
             self.assertIn('Procedimiento de cálculo', vistas['teoria'])
+
+    def test_ocho_bloques_extensos_sin_teoria_en_resumen(self):
+        vistas = construir_pestanas()
+        self.assertEqual(set(BLOQUES), {'simulacion', 'resultados', 'optimizacion',
+                                     'sensibilidad', 'mapa', 'segunda_ley'})
+        for clave, bloques in BLOQUES.items():
+            with self.subTest(clave=clave):
+                self.assertEqual(len(bloques), 8)
+                palabras = sum(len(p.split()) for _, parrafos in bloques for p in parrafos)
+                self.assertGreaterEqual(palabras, 700)
+                self.assertLessEqual(palabras, 850)
+                self.assertEqual(vistas[clave]['teoria'].count('<section '), 8)
+                self.assertNotIn('edu-deep-block', vistas[clave]['resumen'])
+
+    def test_bloques_escapan_titulos_y_parrafos(self):
+        from unittest.mock import patch
+        with patch.dict(BLOQUES, simulacion=(('<script>título</script>', ('a < b & c',)),)):
+            teoria = construir_pestanas()['simulacion']['teoria']
+        self.assertNotIn('<script>', teoria)
+        self.assertIn('&lt;script&gt;', teoria)
+        self.assertIn('a &lt; b &amp; c', teoria)
+
+    def test_http_coloca_teoria_en_su_panel(self):
+        import web_app
+        from html import escape
+        respuesta = web_app.app.test_client().get('/')
+        self.assertEqual(respuesta.status_code, 200)
+        html = respuesta.get_data(as_text=True)
+        for clave, bloques in BLOQUES.items():
+            inicio = html.index(f'id="{clave}-vista-fundamentos"')
+            fin = html.index('</div></div></section>', inicio)
+            panel = html[inicio:fin]
+            self.assertEqual(panel.count('class="edu-deep-block"'), 8)
+            for titulo, parrafos in bloques:
+                self.assertIn(escape(titulo), panel)
+                for parrafo in parrafos:
+                    self.assertIn(escape(parrafo), panel)
 
     def test_no_ocultar_campos_fuera_de_js(self):
         from pathlib import Path
